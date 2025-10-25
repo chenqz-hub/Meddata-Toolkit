@@ -1,0 +1,80 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.nox/
+
+# Logs
+*.log
+*.log.*
+
+# Data files (sensitive patient data)
+docs/*.xlsx
+docs/*.xls
+docs/*.csv
+*.xlsx
+*.xls
+*.csv
+
+# Keep example files
+!examples/*.xlsx
+!examples/*.csv
+
+# Temporary files
+*.tmp
+*.temp
+~$*.xlsx
+~$*.xls
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Project specific
+清理记录.md
+清理项目.bat
+archive/
+papers/
+
+# Keep important docs
+!README.md
+!README_EN.md
+!工具使用指南.md
+!项目说明.md
