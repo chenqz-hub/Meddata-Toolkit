@@ -40,6 +40,7 @@ def run_tool(tool_name):
         return
     
     print(f"\n正在启动 {tool_name}...")
+    print(f"Python解释器: {sys.executable}")
     print("-" * 50)
     
     try:
