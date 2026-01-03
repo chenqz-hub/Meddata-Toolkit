@@ -11,23 +11,56 @@ def clear_screen():
     """清屏"""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def show_menu():
-    """显示菜单"""
+def show_main_menu():
+    """显示主菜单"""
     clear_screen()
     print("=" * 50)
     print("   早发冠心病数据处理工具集")
     print("=" * 50)
     print()
-    print("请选择要使用的工具：")
+    print("请选择功能模块：")
+    print()
+    print("  1. 数据整理")
+    print("  2. 论文准备")
+    print("  3. 快速清理项目")
+    print("  4. 退出")
+    print()
+
+def show_data_menu():
+    """显示数据整理菜单"""
+    clear_screen()
+    print("=" * 50)
+    print("   数据整理工具箱")
+    print("=" * 50)
+    print()
+    print("请选择工具：")
     print()
     print("  1. 单文件多Sheet合并工具")
     print("  2. 跨文件合并工具 (经典版)")
     print("  3. 跨文件合并工具 (增强版)")
-    print("  4. 跨文件合并工具 (专业版) 🌟 全功能")
+    print("  4. 跨文件合并工具 (专业版) 🌟 推荐")
+    print("     - 📊 数据预览表格")
+    print("     - 📦 批量合并模式")
+    print("     - 💾 模板保存")
+    print("     - 📝 导出报告")
+    print("     - ↩️ 撤销/重做")
     print("  5. 重复记录去重工具")
     print("  6. 字段唯一性检查工具")
-    print("  7. 快速清理项目")
-    print("  8. 退出")
+    print("  0. 返回上级菜单")
+    print()
+
+def show_paper_menu():
+    """显示论文准备菜单"""
+    clear_screen()
+    print("=" * 50)
+    print("   论文准备工具箱")
+    print("=" * 50)
+    print()
+    print("请选择工具：")
+    print()
+    print("  1. 参考文献验证工具 (Reference Verifier)")
+    print("  2. 论文格式化工具 (Manuscript Formatter)")
+    print("  0. 返回上级菜单")
     print()
 
 def run_tool(tool_name):
@@ -59,7 +92,7 @@ def run_tool(tool_name):
         traceback.print_exc()
     
     print("\n" + "-" * 50)
-    input("\n按回车键返回主菜单...")
+    input("\n按回车键返回...")
 
 def run_cleanup():
     """运行清理工具"""
@@ -88,35 +121,67 @@ def run_cleanup():
         traceback.print_exc()
     
     print("\n" + "-" * 50)
-    input("\n按回车键返回主菜单...")
+    input("\n按回车键返回...")
+
+def handle_data_menu():
+    """处理数据整理菜单逻辑"""
+    while True:
+        show_data_menu()
+        choice = input("请输入选项 (0-6): ").strip()
+        
+        if choice == "1":
+            run_tool("merge_tool_gui.py")
+        elif choice == "2":
+            run_tool("cross_merge_gui.py")
+        elif choice == "3":
+            run_tool("advanced_merge_gui.py")
+        elif choice == "4":
+            run_tool("professional_merge_gui.py")
+        elif choice == "5":
+            run_tool("deduplicate_tool.py")
+        elif choice == "6":
+            run_tool("check_join_fields.py")
+        elif choice == "0":
+            break
+        else:
+            print("\n✗ 无效选项，请输入 0-6")
+            input("\n按回车键继续...")
+
+def handle_paper_menu():
+    """处理论文准备菜单逻辑"""
+    while True:
+        show_paper_menu()
+        choice = input("请输入选项 (0-2): ").strip()
+        
+        if choice == "1":
+            run_tool("Medical_Reference_Verifier/verify_medical_references.py")
+        elif choice == "2":
+            run_tool("Medical_Manuscript_Formatter/format_manuscript.py")
+        elif choice == "0":
+            break
+        else:
+            print("\n✗ 无效选项，请输入 0-2")
+            input("\n按回车键继续...")
 
 def main():
     """主函数"""
     while True:
-        show_menu()
+        show_main_menu()
         
         try:
-            choice = input("请输入选项 (1-8): ").strip()
+            choice = input("请输入选项 (1-4): ").strip()
             
             if choice == "1":
-                run_tool("merge_tool_gui.py")
+                handle_data_menu()
             elif choice == "2":
-                run_tool("cross_merge_gui.py")
+                handle_paper_menu()
             elif choice == "3":
-                run_tool("advanced_merge_gui.py")
-            elif choice == "4":
-                run_tool("professional_merge_gui.py")
-            elif choice == "5":
-                run_tool("deduplicate_tool.py")
-            elif choice == "6":
-                run_tool("check_join_fields.py")
-            elif choice == "7":
                 run_cleanup()
-            elif choice == "8":
+            elif choice == "4":
                 print("\n再见！")
                 break
             else:
-                print("\n✗ 无效选项，请输入 1-8")
+                print("\n✗ 无效选项，请输入 1-4")
                 input("\n按回车键继续...")
                 
         except KeyboardInterrupt:

@@ -128,6 +128,25 @@ class MergeToolGUI:
         ttk.Button(button_frame, text="清除", command=self.clear_all).pack(side="left", padx=5)
         ttk.Button(button_frame, text="退出", command=self.root.quit).pack(side="right", padx=5)
         
+    def _normalize_join_key(self, series: pd.Series) -> pd.Series:
+        """将匹配键标准化到可安全合并的字符串形式。
+        - 统一为 pandas StringDtype
+        - 去除首尾空白、全角空格
+        - 折叠连续空白
+        - 去除小数点.0（由Excel读取数字造成的浮点展示）
+        """
+        try:
+            s = series.astype('string')
+        except Exception:
+            # 兜底：某些混合类型无法直接转换到 StringDtype
+            s = series.astype(str)
+        # 清洗
+        if hasattr(s, 'str'):
+            s = s.str.replace('\u3000', ' ', regex=False).str.strip()
+            s = s.str.replace(r'\s+', ' ', regex=True)
+            s = s.str.replace(r'\.0$', '', regex=True)
+        return s
+
     def select_file1(self):
         """选择文件1"""
         file_path = filedialog.askopenfilename(
@@ -319,10 +338,27 @@ class MergeToolGUI:
         """实际执行合并操作"""
         try:
             self.root.after(0, lambda: self.match_info_text.insert(tk.END, "\n\n正在合并...\n"))
-            
+
+            # 合并前键列类型提示
+            dtype_msg = (
+                f"键列类型（合并前）: 文件1={self.df1[join_field].dtype}, 文件2={self.df2[join_field].dtype}\n"
+            )
+            self.root.after(0, lambda m=dtype_msg: self.match_info_text.insert(tk.END, m))
+
+            # 复制并规范化键列，避免 int64 vs object 的类型不一致
+            df1 = self.df1.copy()
+            df2 = self.df2.copy()
+            df1[join_field] = self._normalize_join_key(df1[join_field])
+            df2[join_field] = self._normalize_join_key(df2[join_field])
+
+            dtype_after_msg = (
+                f"键列类型（标准化后）: 文件1={df1[join_field].dtype}, 文件2={df2[join_field].dtype}\n"
+            )
+            self.root.after(0, lambda m=dtype_after_msg: self.match_info_text.insert(tk.END, m))
+
             # 执行合并
-            merged_df = pd.merge(self.df1, self.df2, on=join_field, how=merge_type, 
-                                suffixes=('_file1', '_file2'))
+            merged_df = pd.merge(df1, df2, on=join_field, how=merge_type, 
+                                 suffixes=('_file1', '_file2'))
             
             self.root.after(0, lambda: self.match_info_text.insert(
                 tk.END, f"✓ 合并完成: {merged_df.shape[0]} 行 × {merged_df.shape[1]} 列\n"))
@@ -334,7 +370,9 @@ class MergeToolGUI:
             self.root.after(0, lambda: self.save_result(merged_df, default_name, join_field, merge_type))
             
         except Exception as e:
-            self.root.after(0, lambda: messagebox.showerror("错误", f"合并失败: {e}"))
+            # 捕获异常消息，避免在 after 回调中访问已释放的异常变量
+            err_msg = f"合并失败: {e}"
+            self.root.after(0, lambda m=err_msg: messagebox.showerror("错误", m))
     
     def save_result(self, merged_df, default_name, join_field, merge_type):
         """保存结果"""

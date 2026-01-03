@@ -54,6 +54,21 @@
 
 ---
 
+### 5. Medical_Manuscript_Formatter
+**论文格式化工具**
+
+- **功能：** 将Markdown/文本稿件转换为符合医学期刊投稿标准的Word文档
+- **输入：** Markdown (.md) 或 文本 (.txt) 文件
+- **输出：** 格式化后的 Word (.docx) 文档
+- **运行：** 运行根目录下的 `启动论文格式化工具.bat`
+- **特点：**
+  - **多文档类型支持**：自动识别并格式化 Main Manuscript, Cover Letter, Title Page, Highlights 等
+  - **智能排版**：自动处理行号、页码、双倍行距、首行缩进
+  - **表格处理**：Markdown表格转Word表格，宽表格自动转横向页面
+  - **符合标准**：默认使用 Times New Roman 12pt，1英寸边距
+
+---
+
 ## 🔄 常用工作流程
 
 ### 流程1：单文件合并
