@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r", encoding="utf-8") as fh:
+with open("requirements-runtime.txt", "r", encoding="utf-8") as fh:
     requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
 setup(
@@ -14,7 +14,7 @@ setup(
     description="A professional platform for medical data integration and matching",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/your-org/medical-data-integration-platform",
+    url="https://github.com/chenqz-hub/Meddata-Toolkit",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     classifiers=[
@@ -50,7 +50,6 @@ setup(
     entry_points={
         "console_scripts": [
             "mdip=mdip.cli.main:main",
-            "mdip-config=mdip.cli.config:main",
         ],
     },
     include_package_data=True,

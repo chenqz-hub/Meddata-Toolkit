@@ -48,6 +48,62 @@
 
 - **功能：** 检查两个文件的共同字段是否唯一
 - **输入：** 两个Excel文件
+- **输出：** 控制台输出，显示共同字段及其唯一性
+- **运行：** `python check_join_fields.py`
+- **用途：** 在合并之前验证字段是否适合作为主键
+
+---
+
+### 5. append_missing_cases.py
+**补充缺失 Case 工具**
+
+- **功能：** 从原始表中补充合并后缺失的 case（病例/样本）数据
+- **输入：** 
+  - 合并后的表格（缺少某些 case）
+  - 原始表格（包含缺失的 case）
+- **输出：** 补充后的表格文件（`原文件名_补充.xlsx`）
+- **运行方式：**
+  - GUI模式：`python append_missing_cases.py`
+  - CLI模式：`python append_missing_cases.py --merged merged.xlsx --source original.xlsx --key case_id`
+  - 批处理：`run_append_missing.bat`
+  - 主菜单：`python 启动工具.py` → 选项 7
+- **特点：**
+  - 自动识别缺失的 case（基于键字段）
+  - 智能处理字段不一致问题
+  - 完整保留缺失 case 的所有数据
+  - 生成新文件，不修改原文件
+- **使用场景：**
+  - 多表合并后发现部分 case 丢失
+  - 需要从备份表中恢复特定 case
+  - 合并验证后补充遗漏数据
+
+---
+
+## 🚀 快速启动
+
+所有工具都支持以下启动方式：
+
+1. **主菜单启动**（推荐）：
+   ```bash
+   python 启动工具.py
+   ```
+
+2. **直接运行**：
+   ```bash
+   python tools/<工具名>.py
+   ```
+
+3. **批处理文件**：
+   ```bash
+   run_<工具名>.bat
+   ```
+
+## 📝 使用示例
+
+详细使用示例请参考 `examples/` 目录：
+- `basic_file_analysis.py` - 基础文件分析示例
+- `append_missing_example.py` - 补充缺失 Case 示例
+- `quality_assessment_demo.py` - 质量评估示例
 - **输出：** 终端显示各字段的唯一性分析
 - **运行：** `python check_join_fields.py`
 - **用途：** 合并前确认使用哪个字段作为连接键

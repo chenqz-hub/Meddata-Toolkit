@@ -2,6 +2,41 @@
 
 一个专业级的医疗研究数据整合、分析和质量控制平台，专为多源医疗数据处理而设计，遵循软件工程最佳实践。
 
+## ⚡ 快速启动
+
+### 方式1：使用主菜单（推荐）
+**双击运行 `run_launcher.bat`**（固定使用项目 `.venv`，更稳定）
+
+兼容旧方式：也可直接运行 `启动工具.py`。
+
+这将显示图形化菜单，提供以下选项：
+1. 单文件多Sheet合并工具
+2. 跨文件合并工具（经典版）
+3. 跨文件合并工具（增强版）
+4. 跨文件合并工具（专业版） 🌟 全功能
+5. 重复记录去重工具
+6. 字段唯一性检查工具
+7. 填充 Case 数据工具
+8. 快速清理项目
+9. 退出
+
+### 方式2：直接启动工具
+也可以直接双击运行单个工具：
+- `run_tool1.bat` - 单文件多Sheet合并工具
+- `run_tool2.bat` - 跨文件合并工具
+- `run_tool3.bat` - 重复记录去重工具
+- `run_tool4.bat` - 字段唯一性检查工具
+
+### 方式3：命令行（高级用户）
+```bash
+python launcher.py
+```
+
+### 诊断工具
+如果遇到问题，可以运行：
+- `诊断环境.bat` - 检查环境配置和依赖
+- `使用说明.bat` - 查看所有可用的启动方式
+
 ## 🚀 项目概述
 
 医疗数据整合平台 (Medical Data Integration Platform, MDIP) 是一个专为医疗研究和临床数据处理设计的综合性数据整合平台。该平台支持多种格式的医疗数据文件的智能发现、匹配、合并和质量控制，为医疗研究人员提供专业级的数据处理工具。
@@ -27,24 +62,18 @@ python 启动工具.py
 ```
 
 **可用工具**：
-**可用工具**：
-
-**1. 数据整理**
-   - **单文件多Sheet合并工具** - 将一个Excel文件的多个Sheet合并为一张表
-   - **跨文件合并工具（经典版）** - 命令行交互式合并
-   - **跨文件合并工具（增强版）** - 图形界面，文件选择器和可视化配置
-   - **跨文件合并工具（专业版）** ⭐ **推荐** - 完整功能版
-     - 📊 数据预览表格 - 合并前预览数据
-     - 📦 **批量合并模式** - 一次处理多个文件对
-     - 💾 模板保存 - 保存常用配置
-     - 📝 导出报告 - 生成详细报告
-     - ↩️ 撤销/重做 - 支持操作回退
-   - **重复记录去重工具** - 识别和删除重复数据
-   - **字段唯一性检查工具** - 检查字段作为主键的可行性
-
-**2. 论文准备**
-   - **参考文献验证工具** - 验证参考文献有效性并生成RIS引用文件
-   - **论文格式化工具** - 自动格式化论文稿件，支持多种文档类型（正文、Cover Letter等），智能处理表格和行号
+1. **单文件多Sheet合并工具** - 将一个Excel文件的多个Sheet合并为一张表
+2. **跨文件合并工具（经典版）** - 命令行交互式合并
+3. **跨文件合并工具（增强版）** - 图形界面，文件选择器和可视化配置
+4. **跨文件合并工具（专业版）** ⭐ **推荐** - 完整功能版
+   - 📊 数据预览表格 - 合并前预览数据
+   - 📦 **批量合并模式** - 一次处理多个文件对
+   - 💾 模板保存 - 保存常用配置
+   - 📝 导出报告 - 生成详细报告
+   - ↩️ 撤销/重做 - 支持操作回退
+5. **重复记录去重工具** - 识别和删除重复数据
+6. **字段唯一性检查工具** - 检查字段作为主键的可行性
+7. **填充 Case 数据工具** - 从原始表填充合并表中现有 case 的缺失字段值
 
 **快速上手**：
 ```bash
@@ -71,16 +100,16 @@ python 启动工具.py
 
 ```bash
 # 分析目录中的文件结构
-python mdip.py analyze ./data --output 分析报告.xlsx --verbose
+mdip analyze ./data --output 分析报告.xlsx --verbose
 
 # 使用医疗验证规则进行数据质量评估
-python mdip.py quality 患者数据.xlsx --medical --critical-fields patient_id,name --output 质量报告.xlsx
+mdip quality 患者数据.xlsx --medical --critical-fields patient_id,name --output 质量报告.xlsx
 
 # 多文件模糊匹配整合
-python mdip.py match 冠脉造影数据.xlsx PCI数据.csv --fields patient_id,name --fuzzy --output 整合报告.xlsx
+mdip match 冠脉造影数据.xlsx PCI数据.csv --fields patient_id,name --fuzzy --output 整合报告.xlsx
 
 # 医疗标准数据验证
-python mdip.py validate 实验室结果.xlsx --medical --show-errors --output 验证报告.xlsx
+mdip validate 实验室结果.xlsx --medical --show-errors --output 验证报告.xlsx
 ```
 
 ### 方法二：安装后作为库使用
@@ -115,9 +144,12 @@ python -c "from mdip.core.matcher import DataMatcher; print('MDIP安装成功！
 
 ```bash
 # 导航到项目目录
-cd "Early CHD Project"
+cd "D:\\git\\Meddata-Toolkit"
 
-# 安装所需包
+# 安装运行时依赖（推荐）
+pip install -r requirements-runtime.txt
+
+# 可选：安装开发依赖（测试/格式化/可视化）
 pip install -r requirements.txt
 
 # 可选：以开发模式安装，用于库调用
@@ -128,11 +160,13 @@ pip install -e .
 
 ```bash
 # 测试CLI功能
-python mdip.py --help
+mdip --help
 
 # 使用示例数据测试（如果有的话）
 python examples/basic_file_analysis.py ./
 ```
+
+开发规范与常用命令见：[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
 
 ## 📁 项目结构
 
@@ -291,7 +325,68 @@ pytest --cov=src/mdip --cov-report=html
 
 本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件。
 
-## 📞 支持
+## � 工具详细使用说明
+
+### 7. 补充缺失 Case 工具
+
+**使用场景**：
+多个数据表合并后，发现某些 case（病例/样本）的数据在合并表中缺失，但这些 case 仍然存在于某张原始表中。此工具可以从原始表中提取这些缺失的 case 并补充到合并表中。
+
+**功能特点**：
+- ✅ 自动识别缺失的 case（基于键字段，如 `case_id`、`patient_id`）
+- ✅ 从原始表中提取完整的 case 数据行
+- ✅ 智能处理字段不一致问题（自动对齐共同字段）
+- ✅ 生成补充后的新文件，保留原始文件
+- ✅ 支持交互式 GUI 和命令行模式
+
+**启动方式**：
+```bash
+# 方式1：从主菜单启动
+python 启动工具.py
+# 选择选项 7
+
+# 方式2：直接运行批处理文件
+run_append_missing.bat
+
+# 方式3：命令行模式
+python tools/append_missing_cases.py --merged 合并表.xlsx --source 原始表.xlsx --key case_id
+```
+
+**使用步骤**：
+1. 选择【合并后的表格】（缺少某些 case 的表）
+2. 选择【原始表格】（包含缺失 case 的表）
+3. 指定【键字段名】（用于识别 case 的字段，如 `case_id`）
+4. 工具会自动：
+   - 比较两个表中的 case ID
+   - 识别缺失的 case
+   - 显示缺失 case 的列表
+   - 询问是否补充
+   - 生成补充后的新文件
+
+**输出**：
+- 生成文件：`原合并表文件名_补充.xlsx` 或 `.csv`
+- 包含：原合并表的所有数据 + 从原始表补充的缺失 case
+
+**示例**：
+```bash
+# 场景：
+# - merged.xlsx: 合并后的表，有 100 个 case
+# - original.xlsx: 原始表，有 110 个 case
+# - 发现有 10 个 case 在合并时丢失了
+
+python tools/append_missing_cases.py --merged merged.xlsx --source original.xlsx --key patient_id
+
+# 输出：
+# merged_补充.xlsx - 包含完整的 110 个 case
+```
+
+**注意事项**：
+- 确保两个表中都有相同的键字段（如 `case_id`）
+- 如果字段名不完全一致，工具会只保留共同字段，缺失字段填充为空值
+- 建议在补充前备份原文件
+- 工具不会修改原始文件，而是生成新文件
+
+## �📞 支持
 
 - 📧 邮箱: support@mdip.org
 - 🐛 问题反馈: [GitHub Issues](https://github.com/your-org/medical-data-integration-platform/issues)
@@ -320,6 +415,41 @@ pytest --cov=src/mdip --cov-report=html
 ## 🏆 致谢
 
 感谢所有贡献者和使用者对本项目的支持！
+
+---
+
+## 📖 附录：填充 Case 数据工具详细说明
+
+### 使用场景
+合并表中已有 case 记录，但部分字段为空。原始表中有这些字段的完整数据。需要将原始表的数据填充到合并表的空白字段中。
+
+### 工作原理
+1. 基于键字段（如 `patient_id`）在两个表之间匹配 case
+2. 对于每个匹配的 case，逐字段检查：
+   - 合并表中该字段是否为空
+   - 原始表中该字段是否有值
+   - 如果两个条件都满足，则填充
+3. 已有数据不会被覆盖
+
+### 命令行示例
+```bash
+# 基本用法
+python tools/fill_case_data.py --merged merged.xlsx --source original.xlsx --key patient_id
+
+# 指定输出文件
+python tools/fill_case_data.py -m merged.xlsx -s original.xlsx -k patient_id -o result.xlsx
+```
+
+### 实际案例
+**测试数据显示**：
+- 总 case 数：5
+- 匹配到的 case 数：5
+- 总共填充单元格数：7
+- 各字段填充情况：
+  - `blood_pressure`: 3 个值
+  - `cholesterol`: 2 个值
+  - `age`: 1 个值
+  - `diagnosis`: 1 个值
 
 ---
 

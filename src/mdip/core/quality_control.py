@@ -274,6 +274,14 @@ class QualityAssessment:
                     if inf_count > 0:
                         field_accuracy['invalid_count'] += inf_count
                         field_accuracy['issues'].append(f"Infinite values: {inf_count}")
+
+                    # Check for implausible negative values in common clinical measure fields
+                    col_name = str(col).lower()
+                    if any(token in col_name for token in ['age', 'bp', 'pressure', 'cholesterol', 'glucose', 'creatinine']):
+                        negative_count = (non_null_values < 0).sum()
+                        if negative_count > 0:
+                            field_accuracy['invalid_count'] += int(negative_count)
+                            field_accuracy['issues'].append(f"Negative values: {int(negative_count)}")
                     
                     # Check for extreme outliers (basic check)
                     if len(non_null_values) > 10:
@@ -286,6 +294,7 @@ class QualityAssessment:
                         outliers = ((non_null_values < lower_bound) | 
                                   (non_null_values > upper_bound)).sum()
                         if outliers > 0:
+                            field_accuracy['invalid_count'] += int(outliers)
                             field_accuracy['issues'].append(f"Extreme outliers: {outliers}")
                 
                 elif df[col].dtype == 'object':

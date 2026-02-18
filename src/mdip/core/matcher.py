@@ -31,7 +31,7 @@ class DataMatcher:
     
     def __init__(
         self,
-        field_config: FieldConfig,
+        field_config: Optional[FieldConfig] = None,
         match_config: Optional[MatchConfig] = None,
         quality_controller: Optional[QualityAssessment] = None
     ):
@@ -43,7 +43,7 @@ class DataMatcher:
             match_config: Configuration for matching strategies
             quality_controller: Quality control component
         """
-        self.field_config = field_config
+        self.field_config = field_config or FieldConfig()
         self.match_config = match_config or MatchConfig()
         self.quality_controller = quality_controller or QualityAssessment()
         
@@ -55,6 +55,158 @@ class DataMatcher:
         self.match_results: Optional[pd.DataFrame] = None
         
         logger.info("DataMatcher initialized successfully")
+
+    def discover_excel_files(self, directory: Union[str, Path]) -> Dict[str, Dict[str, Any]]:
+        """Discover Excel files in a directory and return basic registry info."""
+        directory = Path(directory)
+        if not directory.exists():
+            raise FileNotFoundError(f"Directory not found: {directory}")
+
+        files = sorted(list(directory.glob("*.xlsx")) + list(directory.glob("*.xls")))
+        file_registry: Dict[str, Dict[str, Any]] = {}
+        for index, file_path in enumerate(files):
+            file_registry[f"file_{index}"] = {
+                "filename": file_path.name,
+                "path": str(file_path),
+                "size": file_path.stat().st_size,
+            }
+        return file_registry
+
+    def analyze_excel_structure(self, file_path: Union[str, Path]) -> Dict[str, Any]:
+        """Analyze workbook sheet headers and field counts."""
+        file_path = Path(file_path)
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+
+        excel_file = pd.ExcelFile(file_path)
+        analysis: Dict[str, Any] = {
+            "filename": file_path.name,
+            "sheets": {},
+            "total_fields": 0,
+        }
+
+        for sheet_name in excel_file.sheet_names:
+            df = pd.read_excel(file_path, sheet_name=sheet_name, nrows=0)
+            headers = list(df.columns)
+            analysis["sheets"][sheet_name] = {
+                "headers": headers,
+                "field_count": len(headers),
+            }
+            analysis["total_fields"] += len(headers)
+
+        return analysis
+
+    def load_dataframe(
+        self,
+        file_path: Union[str, Path],
+        sheet_name: Optional[Union[str, int]] = None,
+    ) -> pd.DataFrame:
+        """Load CSV/Excel file into DataFrame."""
+        file_path = Path(file_path)
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+
+        suffix = file_path.suffix.lower()
+        if suffix == ".csv":
+            return pd.read_csv(file_path)
+        if suffix in [".xlsx", ".xls"]:
+            target_sheet = 0 if sheet_name is None else sheet_name
+            return pd.read_excel(file_path, sheet_name=target_sheet)
+
+        raise ValueError(f"Unsupported file format: {file_path.suffix}")
+
+    def prepare_matching_fields(
+        self,
+        df: pd.DataFrame,
+        matching_fields: List[str],
+    ) -> pd.DataFrame:
+        """Prepare fields for matching with normalization and graceful fallback."""
+        if df.empty:
+            return df.copy()
+
+        result = df.copy()
+        for field in matching_fields:
+            if field in result.columns:
+                series = result[field]
+                if series.dtype == "object":
+                    result[field] = series.astype(str).str.strip()
+        return result
+
+    def find_exact_matches(
+        self,
+        df1: pd.DataFrame,
+        df2: pd.DataFrame,
+        match_fields: List[str],
+    ) -> pd.DataFrame:
+        """Find exact matches across two DataFrames by specified fields."""
+        available_fields = [field for field in match_fields if field in df1.columns and field in df2.columns]
+        if not available_fields:
+            return pd.DataFrame()
+
+        left = self.prepare_matching_fields(df1, available_fields)
+        right = self.prepare_matching_fields(df2, available_fields)
+        return pd.merge(left, right, on=available_fields, how="inner")
+
+    def find_fuzzy_matches(
+        self,
+        df1: pd.DataFrame,
+        df2: pd.DataFrame,
+        match_fields: List[str],
+        similarity_threshold: float = 0.8,
+    ) -> pd.DataFrame:
+        """Find fuzzy matches with simple row-wise similarity scoring."""
+        available_fields = [field for field in match_fields if field in df1.columns and field in df2.columns]
+        if not available_fields:
+            return pd.DataFrame()
+
+        if not 0 <= similarity_threshold <= 1:
+            raise ValueError("similarity_threshold must be between 0 and 1")
+
+        left = self.prepare_matching_fields(df1, available_fields)
+        right = self.prepare_matching_fields(df2, available_fields)
+
+        from fuzzywuzzy import fuzz
+
+        matches: List[Dict[str, Any]] = []
+        for _, row_left in left.iterrows():
+            best_score = -1
+            best_row: Optional[pd.Series] = None
+            for _, row_right in right.iterrows():
+                scores = [
+                    fuzz.ratio(str(row_left[field]), str(row_right[field])) / 100
+                    for field in available_fields
+                ]
+                avg_score = sum(scores) / len(scores)
+                if avg_score > best_score:
+                    best_score = avg_score
+                    best_row = row_right
+
+            if best_row is not None and best_score >= similarity_threshold:
+                merged_row = {**row_left.to_dict(), **{f"right_{k}": v for k, v in best_row.to_dict().items()}}
+                merged_row["similarity_score"] = best_score
+                matches.append(merged_row)
+
+        return pd.DataFrame(matches)
+
+    def calculate_match_confidence(
+        self,
+        record1: Dict[str, Any],
+        record2: Dict[str, Any],
+        match_fields: List[str],
+    ) -> float:
+        """Calculate confidence score between two records based on field equality."""
+        valid_fields = [field for field in match_fields if field in record1 and field in record2]
+        if not valid_fields:
+            return 0.0
+
+        matched = 0
+        for field in valid_fields:
+            value1 = str(record1[field]).strip() if record1[field] is not None else ""
+            value2 = str(record2[field]).strip() if record2[field] is not None else ""
+            if value1 == value2:
+                matched += 1
+
+        return matched / len(valid_fields)
     
     def add_file(
         self,

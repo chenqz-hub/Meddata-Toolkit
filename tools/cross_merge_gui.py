@@ -3,31 +3,42 @@ from pathlib import Path
 from fuzzywuzzy import fuzz
 import tkinter as tk
 from tkinter import filedialog
+import sys
+import io
 
-print("MDIP Cross-File Merger with File Picker")
-print("=" * 50)
+# 设置标准输出编码为UTF-8
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# Hide the main tkinter window
+print("跨文件合并工具", flush=True)
+print("=" * 50, flush=True)
+
+# Create main tkinter window
 root = tk.Tk()
 root.withdraw()
+root.attributes('-topmost', True)  # 确保对话框在最前面
+root.update()
 
 # Select first file
-print("\nPlease select FIRST Excel file...")
+print("\n⚠️  请注意：文件选择对话框已打开！", flush=True)
+print("第一步：请选择第一个Excel文件...", flush=True)
+print("如果看不到对话框，请检查任务栏。\n", flush=True)
+
 file1_path = filedialog.askopenfilename(
-    title="Select First Excel File",
+    title="选择第一个Excel文件",
     filetypes=[("Excel files", "*.xlsx *.xls"), ("All files", "*.*")],
-    initialdir="."
+    initialdir=".",
+    parent=root
 )
 
 if not file1_path:
-    print("No file selected. Exiting.")
+    print("未选择文件，退出程序。", flush=True)
     exit()
 
 file1 = Path(file1_path)
-print(f"Selected: {file1.name}")
+print(f"已选择第一个文件: {file1.name}", flush=True)
 
 # Select second file
-print("\nPlease select SECOND Excel file...")
+print("\n第二步：请选择第二个Excel文件...", flush=True)
 file2_path = filedialog.askopenfilename(
     title="Select Second Excel File",
     filetypes=[("Excel files", "*.xlsx *.xls"), ("All files", "*.*")],
@@ -56,37 +67,41 @@ try:
     print("\nAnalyzing File 2...")
     excel2 = pd.ExcelFile(file2)
     print(f"  File: {file2.name}")
-    print(f"  Sheets ({len(excel2.sheet_names)}): {', '.join(excel2.sheet_names)}")
+    print(f"  工作表 ({len(excel2.sheet_names)}): {', '.join(excel2.sheet_names)}", flush=True)
     
     # Select sheet from file 1
-    print("\n" + "=" * 50)
-    print(f"Select sheet from File 1 (1-{len(excel1.sheet_names)}):")
+    print("\n" + "=" * 50, flush=True)
+    print(f"从文件1选择工作表 (1-{len(excel1.sheet_names)}):", flush=True)
     for i, sheet in enumerate(excel1.sheet_names, 1):
-        print(f"   {i}. {sheet}")
-    sheet1_idx = int(input("Sheet number: ")) - 1
+        print(f"   {i}. {sheet}", flush=True)
+    print(f"\n请输入工作表编号 (1-{len(excel1.sheet_names)}): ", end='', flush=True)
+    sheet1_idx = int(input()) - 1
     if not (0 <= sheet1_idx < len(excel1.sheet_names)):
-        print("Invalid selection")
+        print("❌ 无效选择", flush=True)
         exit()
     sheet1_name = excel1.sheet_names[sheet1_idx]
+    print(f"✅ 已选择: {sheet1_name}", flush=True)
     
     # Select sheet from file 2
-    print(f"\nSelect sheet from File 2 (1-{len(excel2.sheet_names)}):")
+    print(f"\n从文件2选择工作表 (1-{len(excel2.sheet_names)}):", flush=True)
     for i, sheet in enumerate(excel2.sheet_names, 1):
-        print(f"   {i}. {sheet}")
-    sheet2_idx = int(input("Sheet number: ")) - 1
+        print(f"   {i}. {sheet}", flush=True)
+    print(f"\n请输入工作表编号 (1-{len(excel2.sheet_names)}): ", end='', flush=True)
+    sheet2_idx = int(input()) - 1
     if not (0 <= sheet2_idx < len(excel2.sheet_names)):
-        print("Invalid selection")
+        print("❌ 无效选择", flush=True)
         exit()
     sheet2_name = excel2.sheet_names[sheet2_idx]
+    print(f"✅ 已选择: {sheet2_name}", flush=True)
     
     # Load data
-    print("\n" + "=" * 50)
-    print("Loading data...")
+    print("\n" + "=" * 50, flush=True)
+    print("正在加载数据...", flush=True)
     df1 = pd.read_excel(file1, sheet_name=sheet1_name)
     df2 = pd.read_excel(file2, sheet_name=sheet2_name)
     
-    print(f"\nFile 1 [{sheet1_name}]: {df1.shape[0]} rows x {df1.shape[1]} columns")
-    print(f"File 2 [{sheet2_name}]: {df2.shape[0]} rows x {df2.shape[1]} columns")
+    print(f"\n文件1 [{sheet1_name}]: {df1.shape[0]} 行 x {df1.shape[1]} 列", flush=True)
+    print(f"文件2 [{sheet2_name}]: {df2.shape[0]} 行 x {df2.shape[1]} 列", flush=True)
     
     # Analyze fields
     print("\n" + "=" * 50)

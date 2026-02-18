@@ -45,6 +45,7 @@ class FieldConfig:
         self.field_mappings: Dict[str, FieldMapping] = {}
         self.selected_fields: List[str] = []
         self.field_categories: Dict[str, List[str]] = {}
+        self.field_groups = self.field_categories
         self.priority_levels: Dict[str, int] = {}
         
         if config_data:
@@ -246,6 +247,10 @@ class FieldConfig:
         
         if field_key not in self.selected_fields:
             self.selected_fields.append(field_key)
+
+    def add_field_group(self, group_name: str, field_keys: List[str]) -> None:
+        """Backward-compatible helper to register field groups."""
+        self.field_categories[group_name] = list(field_keys)
     
     def select_fields(self, field_keys: List[str]) -> None:
         """Select specific fields for processing."""
