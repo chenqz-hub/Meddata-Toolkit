@@ -17,12 +17,7 @@ python 启动工具.py
 # 选择选项 7
 ```
 
-### 方式2：批处理文件
-```bash
-run_fill_data.bat
-```
-
-### 方式3：命令行
+### 方式2：命令行
 ```bash
 python tools/fill_case_data.py --merged 合并表.xlsx --source 原始表.xlsx --key patient_id
 ```

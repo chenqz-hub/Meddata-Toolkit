@@ -53,10 +53,6 @@ docs/*.csv
 *.xls
 *.csv
 
-# Keep example files
-!examples/*.xlsx
-!examples/*.csv
-
 # Temporary files
 *.tmp
 *.temp

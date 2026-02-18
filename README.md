@@ -21,11 +21,16 @@
 9. 退出
 
 ### 方式2：直接启动工具
-也可以直接双击运行单个工具：
-- `run_tool1.bat` - 单文件多Sheet合并工具
-- `run_tool2.bat` - 跨文件合并工具
-- `run_tool3.bat` - 重复记录去重工具
-- `run_tool4.bat` - 字段唯一性检查工具
+也可以直接运行单个工具：
+```bash
+python tools/merge_tool_gui.py
+python tools/cross_merge_gui.py
+python tools/advanced_merge_gui.py
+python tools/professional_merge_gui.py
+python tools/deduplicate_tool.py
+python tools/check_join_fields.py
+python tools/fill_case_data.py
+```
 
 ### 方式3：命令行（高级用户）
 ```bash
@@ -79,15 +84,10 @@ python 启动工具.py
 ```bash
 # 1. 启动工具集（主入口）
 python 启动工具.py
-# 2. 选择功能模块（数据整理/论文准备）
-# 3. 选择具体工具
-
-# 或者直接使用快捷脚本：
-# - 启动论文格式化工具.bat
-# - 启动参考文献验证工具.bat
+# 2. 选择具体工具
 
 # 示例：使用专业版合并工具
-# 1. 启动工具集 -> 选择"1. 数据整理" -> 选择"4. 跨文件合并工具 (专业版)"
+# 1. 启动工具集 -> 选择"4. 跨文件合并工具 (专业版)"
 # 2. 使用图形界面选择文件、配置合并参数
 # 3. 点击"执行合并"完成操作
 ```

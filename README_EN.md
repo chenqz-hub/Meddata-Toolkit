@@ -19,16 +19,16 @@ A comprehensive, professional-grade platform for integrating, analyzing, and ens
 
 ```bash
 # Analyze file structure in a directory
-python mdip.py analyze ./data --output analysis_report.xlsx --verbose
+mdip analyze ./data --output analysis_report.xlsx --verbose
 
 # Assess data quality with medical validation rules
-python mdip.py quality patients.xlsx --medical --critical-fields patient_id,name --output quality_report.xlsx
+mdip quality patients.xlsx --medical --critical-fields patient_id,name --output quality_report.xlsx
 
 # Match data from multiple files with fuzzy matching
-python mdip.py match cag_data.xlsx pci_data.csv --fields patient_id,name --fuzzy --output integration_report.xlsx
+mdip match cag_data.xlsx pci_data.csv --fields patient_id,name --fuzzy --output integration_report.xlsx
 
 # Validate data against medical standards
-python mdip.py validate lab_results.xlsx --medical --show-errors --output validation_report.xlsx
+mdip validate lab_results.xlsx --medical --show-errors --output validation_report.xlsx
 ```
 
 ### Method 2: Installation and Library Usage
@@ -52,9 +52,12 @@ python -c "from mdip.core.matcher import DataMatcher; print('MDIP installed succ
 
 ```bash
 # Navigate to the project directory
-cd "Early CHD Project"
+cd "D:\\git\\Meddata-Toolkit"
 
-# Install required packages
+# Install runtime dependencies
+pip install -r requirements-runtime.txt
+
+# Optional: install dev dependencies
 pip install -r requirements.txt
 
 # Optional: Install in development mode for library usage
@@ -65,7 +68,7 @@ pip install -e .
 
 ```bash
 # Test CLI functionality
-python mdip.py --help
+mdip --help
 
 # Test with sample data (if available)
 python examples/basic_file_analysis.py ./
@@ -77,42 +80,42 @@ python examples/basic_file_analysis.py ./
 
 ```bash
 # Analyze all Excel files in a directory
-python mdip.py analyze ./medical_data --output structure_analysis.xlsx --show-fields
+mdip analyze ./medical_data --output structure_analysis.xlsx --show-fields
 
 # Analyze with verbose output to see detailed field information
-python mdip.py analyze ./data --verbose --output detailed_analysis.xlsx
+mdip analyze ./data --verbose --output detailed_analysis.xlsx
 ```
 
 ### 2. Data Quality Assessment
 
 ```bash
 # Basic quality assessment
-python mdip.py quality patient_data.xlsx --output quality_report.xlsx
+mdip quality patient_data.xlsx --output quality_report.xlsx
 
 # Medical data quality assessment with critical fields
-python mdip.py quality clinical_data.xlsx --medical \
+mdip quality clinical_data.xlsx --medical \
   --critical-fields patient_id,medical_record_number \
   --important-fields age,gender,diagnosis \
   --key-fields patient_id \
   --output comprehensive_quality_report.xlsx
 
 # Quality assessment with specific Excel sheet
-python mdip.py quality workbook.xlsx --sheet "Patient Demographics" --output quality_report.json
+mdip quality workbook.xlsx --sheet "Patient Demographics" --output quality_report.json
 ```
 
 ### 3. Data Matching and Integration
 
 ```bash
 # Basic exact matching
-python mdip.py match file1.xlsx file2.csv --fields patient_id --output match_results.xlsx
+mdip match file1.xlsx file2.csv --fields patient_id --output match_results.xlsx
 
 # Advanced fuzzy matching for names and IDs
-python mdip.py match cag_patients.xlsx pci_patients.xlsx \
+mdip match cag_patients.xlsx pci_patients.xlsx \
   --fields patient_id,patient_name,medical_record_number \
   --fuzzy --output patient_integration.xlsx
 
 # Multi-file integration with custom configuration
-python mdip.py match data1.xlsx data2.xlsx data3.csv \
+mdip match data1.xlsx data2.xlsx data3.csv \
   --fields id,name --fuzzy --config custom_match_config.json \
   --output multi_source_integration.xlsx
 ```
@@ -121,21 +124,21 @@ python mdip.py match data1.xlsx data2.xlsx data3.csv \
 
 ```bash
 # Medical data validation with built-in rules
-python mdip.py validate patient_records.xlsx --medical --output validation_results.xlsx
+mdip validate patient_records.xlsx --medical --output validation_results.xlsx
 
 # General validation with error details
-python mdip.py validate lab_data.csv --show-errors --verbose --output detailed_validation.xlsx
+mdip validate lab_data.csv --show-errors --verbose --output detailed_validation.xlsx
 
 # Custom validation rules (when implemented)
-python mdip.py validate research_data.xlsx --rules custom_rules.json --output validation_report.xlsx
+mdip validate research_data.xlsx --rules custom_rules.json --output validation_report.xlsx
 ```
 
 ## 🏗️ Project Structure
 
 ```
-Early CHD Project/
-├── 📄 mdip.py                    # Main CLI runner script
-├── 📄 requirements.txt           # Python dependencies
+Meddata-Toolkit/
+├── 📄 requirements-runtime.txt   # Runtime dependencies
+├── 📄 requirements.txt           # Dev/extra dependencies
 ├── 📄 setup.py                   # Package installation configuration
 ├── 📄 README.md                  # This documentation
 ├── 📂 src/mdip/                  # Main MDIP package
@@ -403,7 +406,7 @@ pip install -e .
 ```bash
 # Solution: Check file permissions and close Excel if open
 # Use a different output directory with write permissions
-python mdip.py quality data.xlsx --output ./reports/quality_report.xlsx
+mdip quality data.xlsx --output ./reports/quality_report.xlsx
 ```
 
 **Issue**: `UnicodeDecodeError` when processing files
@@ -415,7 +418,7 @@ python mdip.py quality data.xlsx --output ./reports/quality_report.xlsx
 **Issue**: Poor matching results
 ```bash
 # Solution: Adjust fuzzy matching threshold or add more matching fields
-python mdip.py match file1.xlsx file2.xlsx \
+mdip match file1.xlsx file2.xlsx \
   --fields patient_id,name,dob \
   --fuzzy --verbose
 ```
@@ -443,7 +446,8 @@ python mdip.py match file1.xlsx file2.xlsx \
 ```bash
 # Clone and setup development environment
 git clone <repository-url>
-cd mdip
+cd Meddata-Toolkit
+pip install -r requirements-runtime.txt
 pip install -r requirements.txt
 pip install -e .
 

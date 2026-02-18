@@ -1,7 +1,0 @@
-case_id,name,age,gender,score
-1,John,45,M,85
-2,,38,F,90
-1,John,,M,
-3,Alice,29,F, 
-2,Anna,38,,88
-4,,,M,70
